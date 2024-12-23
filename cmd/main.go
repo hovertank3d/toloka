@@ -31,17 +31,24 @@ func main() {
 
 	outFile = os.Stdout
 
+	skip := false
 	for i, arg := range os.Args[1:] {
+		if skip {
+			skip = false
+			continue
+		}
+
 		if arg == "-o" {
-			if len(os.Args) < i {
+			if len(os.Args) < i+1 {
 				usage()
 			}
-			f, err := os.Open(os.Args[i+1])
+			f, err := os.OpenFile(os.Args[i+2], os.O_CREATE|os.O_WRONLY, 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
 
 			outFile = f
+			skip = true
 			continue
 		}
 
