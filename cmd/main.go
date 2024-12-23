@@ -27,6 +27,7 @@ func main() {
 	var (
 		searchQeury string
 		outFile     io.Writer
+		outName     string
 	)
 
 	outFile = os.Stdout
@@ -42,12 +43,7 @@ func main() {
 			if len(os.Args) < i+1 {
 				usage()
 			}
-			f, err := os.OpenFile(os.Args[i+2], os.O_CREATE|os.O_WRONLY, 0644)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			outFile = f
+			outName = os.Args[i+2]
 			skip = true
 			continue
 		}
@@ -87,6 +83,15 @@ func main() {
 	data, err := io.ReadAll(reader)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if outName != "" {
+		f, err := os.OpenFile(outName, os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		outFile = f
 	}
 
 	if _, err := outFile.Write(data); err != nil {
